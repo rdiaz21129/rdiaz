@@ -1,0 +1,5 @@
+show run | in hostname
+terminal length 0
+show clock
+show switch
+show inventory

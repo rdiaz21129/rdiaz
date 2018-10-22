@@ -1,0 +1,445 @@
+DGAT-I001-SERV#sh run
+Building configuration...
+
+Current configuration : 33733 bytes
+!
+! Last configuration change at 18:21:42 UTC Tue Aug 7 2018 by ipsoft
+! NVRAM config last updated at 18:21:43 UTC Tue Aug 7 2018 by ipsoft
+!
+version 15.0
+no service pad
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec localtime show-timezone
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+service linenumber
+service compress-config
+!
+hostname DGAT-I001-SERV
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-vrf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+logging buffered 10240
+logging console informational
+logging cns-events debugging
+enable secret 4 tHRRWQzAui4WsyHFtk4E9RxD0nhVzEs9dPdmtnA8lhM
+!
+username ipsoft privilege 15 secret 4 OGqTZquXDSRmNiacLkGNjGfOOq0HvGNlrpze7RAVCWs
+username ipsoftnetwork privilege 15 secret 5 $1$3bna$TqDWy1n/.sfyGe0RI23WW.
+aaa new-model
+!
+!
+aaa authentication login default local line
+aaa authorization exec default local
+!
+!
+!
+!
+!
+aaa session-id common
+switch 1 provision ws-c3850-48p
+switch 2 provision ws-c3850-48p
+no ip source-route
+!
+ip domain-name duracell.com
+ip name-server 198.181.153.101
+ip name-server 198.185.221.101
+ip device tracking
+no ip dhcp conflict logging
+!
+!
+qos wireless-default-untrust
+vtp domain DGAT.US.NA.PG
+vtp mode transparent
+!
+crypto pki trustpoint TP-self-signed-500711501
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-500711501
+ revocation-check none
+ rsakeypair TP-self-signed-500711501
+!
+!
+crypto pki certificate chain TP-self-signed-500711501
+ certificate self-signed 01
+  30820251 308201BA A0030201 02020101 300D0609 2A864886 F70D0101 04050030
+  30312E30 2C060355 04031325 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 35303037 31313530 31301E17 0D313730 33313430 30313531
+  305A170D 32303031 30313030 30303030 5A303031 2E302C06 03550403 1325494F
+  532D5365 6C662D53 69676E65 642D4365 72746966 69636174 652D3530 30373131
+  35303130 819F300D 06092A86 4886F70D 01010105 0003818D 00308189 02818100
+  CA409CBF 7451B18A 6BA27770 3151DD14 47A08EC7 67A825CE AE315A99 FF1B36FF
+  9C657B9E CE133E7F 1D1B0C01 A5DC6D48 27C1DCF4 7D541F39 DCAF5233 FEF75927
+  72EE262A 87AC089D 22C33475 78DEC6A2 5E828CB3 172A19A1 885B1C5D EB6246DD
+  F1FE0BD7 73198F4B 93873D30 0249F7CA 42ACD8CE 7BC44B57 ED27FD08 B1185519
+  02030100 01A37B30 79300F06 03551D13 0101FF04 05300301 01FF3026 0603551D
+  11041F30 1D821B44 4741542D 49303031 2D534552 562E6475 72616365 6C6C2E63
+  6F6D301F 0603551D 23041830 16801452 FFBEB176 D3163AE3 1BA8E138 03B1CC7F
+  DA6CB430 1D060355 1D0E0416 041452FF BEB176D3 163AE31B A8E13803 B1CC7FDA
+  6CB4300D 06092A86 4886F70D 01010405 00038181 0016F0FD 09BA0C74 50830615
+  BB9F32D2 691F54A9 BC6A2059 0D019FC0 CEDBBB46 525DFE69 5235F263 586C38C4
+  D7652FA0 92F65D1A CE285395 D8C6F7EC B7CC2BD9 F913D5E6 D9C7C767 E24AF9CC
+  366B1F18 8E891FC1 9C04A3F3 FD9BBD3C A0FD2A83 DD2BB33F 16FD4B95 1C1B89DA
+  8C31C13F 9C9CE760 1ABE28AB 1168D6F8 2ECB5CE3 90
+  	quit
+!
+!
+!
+!
+!
+errdisable recovery cause udld
+errdisable recovery cause bpduguard
+errdisable recovery cause security-violation
+errdisable recovery cause channel-misconfig (STP)
+errdisable recovery cause pagp-flap
+errdisable recovery cause dtp-flap
+errdisable recovery cause link-flap
+errdisable recovery cause sfp-config-mismatch
+errdisable recovery cause gbic-invalid
+errdisable recovery cause l2ptguard
+errdisable recovery cause psecure-violation
+errdisable recovery cause port-mode-failure
+errdisable recovery cause dhcp-rate-limit
+errdisable recovery cause pppoe-ia-rate-limit
+errdisable recovery cause mac-limit
+errdisable recovery cause vmps
+errdisable recovery cause storm-control
+errdisable recovery cause inline-power
+errdisable recovery cause arp-inspection
+errdisable recovery cause loopback
+errdisable recovery cause psp
+errdisable recovery interval 600
+diagnostic bootup level minimal
+port-channel load-balance src-dst-ip
+archive
+ log config
+  logging enable
+  logging size 50
+  notify syslog contenttype plaintext
+identity policy webauth-global-inactive
+ inactivity-timer 3600
+!
+spanning-tree mode rapid-pvst
+spanning-tree portfast bpduguard default
+spanning-tree extend system-id
+!
+redundancy
+ mode sso
+!
+!
+vlan 122
+!
+vlan 123
+ name New_Server_Vlan
+!
+vlan 201
+ name DiamondIP_Mgmt_VLAN
+!
+vlan 202
+ name DiamondIP_Service_VLAN
+!
+vlan 203
+ name Security_mgmt
+!
+vlan 990
+ name LAN-Unused_Port_Pool
+!
+vlan 991
+ name LAN-Native_VLAN
+!
+vlan 999
+ name LAN-Switch_Management_VLAN
+!
+vlan 2255
+ name DEVICE_MGMT_v2255
+!
+ip tcp synwait-time 10
+no ip ftp passive
+ip tftp source-interface Vlan999
+ip ssh time-out 60
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+interface Port-channel3
+ description 802.1Q Trunk-DGATSC1GW_Po3
+ switchport trunk native vlan 991
+ switchport trunk allowed vlan 122,123,201-203,999,2255
+ switchport mode trunk
+ logging event link-status
+ storm-control action trap
+ spanning-tree bpduguard disable
+ spanning-tree guard loop
+!
+interface GigabitEthernet0/0
+ vrf forwarding Mgmt-vrf
+ no ip address
+ negotiation auto
+!
+interface GigabitEthernet1/0/1
+ description server usalpi001 mgmt
+ switchport access vlan 123
+ switchport mode AAAAAAAAAAAAA
+ storm-control broadcast level 20.00
+ storm-control multicast level 20.00
+ storm-control action trap
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/2
+ description usalp-opengear-01_NET1
+ switchport access vlan 990
+ switchport mode BBBBBBBBBBB
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/3
+ description usalp-opengear-02_NET2
+ switchport access vlan 2255
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/4
+ description DGAT-OOB Modem for BT Assure
+ switchport access vlan 203
+ switchport mode access
+ storm-control broadcast level 20.00
+ storm-control multicast level 20.00
+ storm-control action trap
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/5
+ description Infoblox Lan
+ switchport access vlan 122
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/6
+ description Infoblox MGMT
+ switchport access vlan 201
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/7
+ description Infoblox HA
+ switchport access vlan 122
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/1/8
+ description 802.1Q Trunk-DGATSC1GW-Ten1/1/31
+ switchport trunk native vlan 991
+ switchport trunk allowed vlan 122,123,201-203,999,2255
+ switchport mode trunk
+ udld port
+ storm-control action trap
+ channel-group 3 mode active
+ spanning-tree bpduguard disable
+ spanning-tree guard loop
+!
+interface TenGigabitEthernet1/1/9
+!
+interface TenGigabitEthernet1/1/10
+!
+interface TenGigabitEthernet1/1/11
+!
+interface TenGigabitEthernet1/1/12
+!
+interface GigabitEthernet2/0/13
+ description Security management
+ switchport access vlan 203
+ switchport mode access
+ storm-control broadcast level 20.00
+ storm-control multicast level 20.00
+ storm-control action trap
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet2/0/14
+ description usalp-opengear-02_NET1
+ switchport access vlan 122
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet2/1/15
+ description 802.1Q Trunk-DGATSC1GW-Ten2/1/31
+ switchport trunk native vlan 991
+ switchport trunk allowed vlan 122,123,201-203,999,2255
+ switchport mode trunk
+ udld port
+ storm-control action trap
+ channel-group 3 mode active
+ spanning-tree bpduguard disable
+ spanning-tree guard loop
+!
+interface GigabitEthernet2/1/16
+ description Not in Use
+ switchport access vlan 990
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet2/1/17
+ description Not in Use
+ switchport access vlan 990
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet2/1/18
+ description Not in Use
+ switchport access vlan 990
+ switchport mode access
+ shutdown
+!
+interface TenGigabitEthernet2/1/19
+!
+interface TenGigabitEthernet2/1/20
+!
+interface TenGigabitEthernet2/1/21
+!
+interface TenGigabitEthernet2/1/22
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan122
+ no ip address
+!
+interface Vlan999
+ description LAN|||Y|||||||VLAN999-LAN_Management
+ ip address 198.185.222.166 255.255.255.224
+ no ip redirects
+ no ip unreachables
+ no ip proxy-arp
+!
+interface Vlan2255
+ description DEVICE_MGMT_v2255
+ ip address 10.5.255.21 255.255.255.0
+!
+ip default-gateway 198.185.222.161
+no ip http server
+ip http secure-server
+!
+!
+ip access-list extended GENERIC-VVLAN-CONTROL
+ remark Use this for ip phones marking signalling as dscp CS3 in Voice VLAN
+ip access-list extended GENERIC-VVLAN-VOICE
+ remark Use this for ip phones marking voice as dscp EF in Voice VLAN
+ip access-list extended QOS-UNTRUSTED-ACL
+ permit ip any any
+!
+logging trap debugging
+logging facility local3
+logging host 198.203.198.23 transport udp port 51480
+access-list 71 permit 10.190.1.0 0.0.0.255
+access-list 71 permit 10.44.50.0 0.0.0.255
+access-list 99 deny   any
+!
+snmp-server community Dur4c311c0<Y$ RO 71
+snmp-server system-shutdown
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps envmon fan shutdown supply temperature
+snmp-server enable traps stackwise
+snmp-server enable traps storm-control trap-rate 10
+snmp-server enable traps config
+snmp-server host 10.190.1.62 version 2c Dur4c311c0<Y$
+snmp-server host 10.44.50.118 version 2c Dur4c311c0<Y$
+snmp ifmib ifindex persist
+snmp mib persist cbqos
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 30 0
+ privilege level 15
+ media-type rj45 switch 1
+ media-type rj45 switch 2
+ logging synchronous
+ notify
+ history size 64
+ transport preferred none
+ escape-character 3
+ stopbits 1
+line aux 0
+ privilege level 3
+ stopbits 1
+line vty 0 4
+ exec-timeout 30 0
+ privilege level 15
+ logging synchronous
+ length 23
+ notify
+ history size 64
+ full-help
+ transport preferred none
+ transport input all
+ escape-character 3
+line vty 5 15
+ exec-timeout 30 0
+ privilege level 15
+ logging synchronous
+ length 23
+ notify
+ history size 64
+ full-help
+ transport preferred none
+ transport input all
+ escape-character 3
+!
+ntp server 198.185.222.161 prefer
+wsma agent exec
+ profile httplistener
+ profile httpslistener
+wsma agent config
+ profile httplistener
+ profile httpslistener
+wsma agent filesys
+ profile httplistener
+ profile httpslistener
+wsma agent notify
+ profile httplistener
+ profile httpslistener
+!
+wsma profile listener httplistener
+ transport http
+!
+wsma profile listener httpslistener
+ transport https
+ap dot11 24ghz rrm channel dca 1
+ap dot11 24ghz rrm channel dca 6
+ap dot11 24ghz rrm channel dca 11
+ap dot11 5ghz rrm channel dca 36
+ap dot11 5ghz rrm channel dca 40
+ap dot11 5ghz rrm channel dca 44
+ap dot11 5ghz rrm channel dca 48
+ap dot11 5ghz rrm channel dca 52
+ap dot11 5ghz rrm channel dca 56
+ap dot11 5ghz rrm channel dca 60
+ap dot11 5ghz rrm channel dca 64
+ap dot11 5ghz rrm channel dca 149
+ap dot11 5ghz rrm channel dca 153
+ap dot11 5ghz rrm channel dca 157
+ap dot11 5ghz rrm channel dca 161
+ap group default-group
+end
